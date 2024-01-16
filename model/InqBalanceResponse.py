@@ -16,6 +16,6 @@ class Data(BaseModel):
     response_desc: str
     company_account_number: str
     company_account_name: str
-    company_detail_1: None
+    company_detail_1: str
     company_detail_2: None
     company_detail_3: None
