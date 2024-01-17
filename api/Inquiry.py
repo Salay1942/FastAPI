@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from model import InqBalanceRequest
 from model import InqBalanceResponse
+from db import get_db
+from sqlalchemy.orm import Session
 import requests_async as requests
 import json
 import asyncio
-from db import get_db
-from sqlalchemy.orm import Session
 import cx_Oracle
 
 router = APIRouter()
@@ -55,13 +55,13 @@ def validateUser(username, password, db):
     return results[2]
 
 async def inqBalance():
-    response = await requests.post('http://10.0.4.44:8888/BillServiceRestAPI/API/INQ_ACC_INFO',
-    json = {
-    "exSource": "BILLPAY",
-    "xRef": "20241701011235",
-    "accNo": "010110000615559001",
-    "cCy": "LAK"
-    })
+    request = {
+        "exSource": "BILLPAY",
+        "xRef": "20241701011236",
+        "accNo": "010110000615559001",
+        "cCy": "LAK"
+    }
+    response = await requests.post('http://10.0.4.44:8888/BillServiceRestAPI/API/INQ_ACC_INFO', json = request)
     #print(response.status_code)
     #print(response.text)
     result = json.loads(response.text)
