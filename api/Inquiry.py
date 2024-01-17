@@ -15,9 +15,9 @@ router = APIRouter()
 def inquiry(inq: InqBalanceRequest.param, db: Session = Depends(get_db)):
     cur = db.cursor()
     checkUsername = validateUser(inq.username, inq.password, db)
-    xx = asyncio.run(xxx())
-    account_no = xx[0]
-    currentBalance = xx[1]
+    inq_bal = asyncio.run(inqBalance())
+    account_no = inq_bal[0]
+    currentBalance = inq_bal[1]
     print(account_no)
     print(currentBalance)
     if checkUsername == "false":
@@ -54,7 +54,7 @@ def validateUser(username, password, db):
     results = cur.callproc('sp_validate_user',[username, password, l_cur])
     return results[2]
 
-async def xxx():
+async def inqBalance():
     response = await requests.post('http://10.0.4.44:8888/BillServiceRestAPI/API/INQ_ACC_INFO',
     json = {
     "exSource": "BILLPAY",
