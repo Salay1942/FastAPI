@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from model import InqBalanceRequest
 from model import InqBalanceResponse
+import requests_async as requests
+import json
+import asyncio
 from db import get_db
 from sqlalchemy.orm import Session
 import cx_Oracle
@@ -12,6 +15,11 @@ router = APIRouter()
 def inquiry(inq: InqBalanceRequest.param, db: Session = Depends(get_db)):
     cur = db.cursor()
     checkUsername = validateUser(inq.username, inq.password, db)
+    xx = asyncio.run(xxx())
+    account_no = xx[0]
+    currentBalance = xx[1]
+    print(account_no)
+    print(currentBalance)
     if checkUsername == "false":
         return JSONResponse(content={'401': 'Unauthorized'}, status_code=401)
     else:
@@ -45,7 +53,19 @@ def validateUser(username, password, db):
     l_cur = cur.var(str)
     results = cur.callproc('sp_validate_user',[username, password, l_cur])
     return results[2]
-    
+
+async def xxx():
+    response = await requests.post('http://10.0.4.44:8888/BillServiceRestAPI/API/INQ_ACC_INFO',
+    json = {
+    "exSource": "BILLPAY",
+    "xRef": "20241701011235",
+    "accNo": "010110000615559001",
+    "cCy": "LAK"
+    })
+    #print(response.status_code)
+    #print(response.text)
+    result = json.loads(response.text)
+    return result["accNo"], result["currentBalance"]
 
 
   
